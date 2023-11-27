@@ -5,46 +5,71 @@ resource "docker_container" "result" {
         internal = 80
         external = 5001
     }
-    volumes {
-        container_path = "./result:/usr/local/app"
+    ports {
+        ip = "127.0.0.1"
+        internal = 9229
+        external = 9229
     }
-    command = ["nodemon", "--inspect=0.0.0.0", "server.js"]
+    volumes {
+        container_path = "../exemple-voting-app/result:/usr/local/app"
+    }
+    entrypoint = ["nodemon", "--inspect=0.0.0.0", "server.js"]
     restart = "always"
-    depends_on = [ docker_image.postgres ]
+    depends_on = [ docker_container.postgres ]
+    networks_advanced {
+        name = docker_network.back-tier.name
+    }
+    networks_advanced {
+        name = docker_network.front-tier.name
+    } 
 }
 
 resource "docker_container" "worker" {
     name  = "worker"
     image = docker_image.worker.name
-    depends_on = [ docker_image.redis, docker_image.postgres ]
+    depends_on = [ docker_container.redis, docker_container.postgres ]
     restart = "always"
+    networks_advanced {
+        name = docker_network.back-tier.name
+    }
 }
 
 resource "docker_container" "vote" {
     name  = "vote"
+
     image = docker_image.vote.name
     ports {
         internal = 80
-        external = 5000
+        external = 4999
     }
     volumes {
-        container_path = "./vote:/usr/local/app"
+        container_path = "../exemple-voting-app/vote:/usr/local/app"
     }
     healthcheck {
         test = ["CMD", "curl", "-f", "http://localhost"]
         interval = "10s"
         timeout = "5s"
         retries = 3
+        start_period = "10s"
     }
-    depends_on = [ docker_image.redis ]
+    depends_on = [ docker_container.redis]
     restart = "always"
+    networks_advanced {
+        name = docker_network.back-tier.name
+    }
+    networks_advanced {
+        name = docker_network.front-tier.name
+    } 
 }
 
 resource "docker_container" "postgres" {
     name  = "postgres"
     image = docker_image.postgres.name
     volumes {
-        container_path = "./postgres-data:/var/lib/postgresql/data"
+        container_path = "../exemple-voting-app/db-data:/var/lib/postgresql/data"
+    }
+    volumes {
+        container_path = "../exemple-voting-app/healthchecks:/healthchecks"
     }
     healthcheck {
         test = ["../exemple-voting-app/healthchecks/postgres.sh"]
@@ -52,4 +77,31 @@ resource "docker_container" "postgres" {
     }
     env = ["POSTGRES_PASSWORD=postgres","POSTGRES_USER=postgres"]
     restart = "always"
+    networks_advanced {
+        name = docker_network.back-tier.name
+    }
+}
+resource "docker_container" "redis" {
+    name  = "redis"
+    image = docker_image.redis.name
+    volumes {
+        container_path = "../exemple-voting-app/healthchecks:/healthchecks"
+    }
+    healthcheck {
+        test = ["../exemple-voting-app/healthchecks/redis.sh"]
+        interval = "5s"
+    }
+    networks_advanced {
+        name = docker_network.back-tier.name
+    }
+}
+
+resource "docker_container" "seed" {
+    name  = "seed"
+    image = docker_image.seed.name
+    depends_on = [ docker_container.vote]
+    restart = "no"
+    networks_advanced {
+        name = docker_network.front-tier.name
+    }
 }

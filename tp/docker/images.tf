@@ -5,8 +5,8 @@ resource "docker_image" "result" {
   }
 }
 
-resource "docker_image" "seed-data" {
-  name = "seed-data"
+resource "docker_image" "seed" {
+  name = "seed"
   build {
     context = "../example-voting-app/seed-data/"
   }
