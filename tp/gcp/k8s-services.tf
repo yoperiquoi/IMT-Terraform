@@ -1,81 +1,48 @@
-resource "kubernetes_service_v1" "db" {
-  metadata {
-    name = "db"
-    labels = {
-      app = "db"
-    }
-  }
-  spec {
-    selector = {
-      app = "db"
-    }
-    type = "ClusterIP"
-    port {
-      port = 5432
-      target_port = 5432
-      name = "db-service"
-    }
-  }
+
+module "db-service"{
+  source = "./modules/k8s-service-cluster/"
+
+  metadata_name = "db"
+  label_name    = "db"
+  selector_name = "db"
+  type          = "ClusterIP"
+  port          = 5432
+  target_port   = 5432
+  port_name     = "db-service"
+}
+module "redis-service" {
+  source = "./modules/k8s-service-cluster/"
+
+  metadata_name = "redis"
+  label_name    = "redis"
+  selector_name = "redis"
+  type          = "ClusterIP"
+  port          = 6379
+  target_port   = 6379
+  port_name     = "redis-service"
 }
 
-resource "kubernetes_service_v1" "redis" {
-  metadata {
-    name = "redis"
-    labels = {
-      app = "redis"
-    }
-  }
-  spec {
-    selector = {
-      app = "redis"
-    }
-    type = "ClusterIP"
-    port {
-      port = 6379
-      target_port = 6379
-      name = "redis-service"
-    }
-  }
-}
+module "result-service"{
+ source = "./modules/k8s-service-node/"
 
-resource "kubernetes_service_v1" "result" {
-  metadata {
-    name = "result"
-    labels = {
-      app = "result"
-    }
-  }
-  spec {
-    selector = {
-      app = "result"
-    }
-    type = "NodePort"
-    port {
-      port = 5001
-      target_port = 80
-      node_port = 31001
-      name = "result-service"
-    }
-  }
+  metadata_name = "result"
+  label_name    = "result"
+  selector_name = "result"
+  type          = "NodePort"
+  port          = 5001
+  target_port   = 80
+  port_name     = "result-service"
+  node_port     = 31001
 }
+module "vote-service" {
+  source = "./modules/k8s-service-node/"
 
-resource "kubernetes_service_v1" "vote" {
-  metadata {
-    name = "vote"
-    labels = {
-      app = "vote"
-    }
-  }
-  spec {
-    selector = {
-      app = "vote"
-    }
-    type = "NodePort"
-    port {
-      port = 5000
-      target_port = 80
-      node_port = 31000
-      name = "vote-service"
-    }
-  }
+  metadata_name = "vote"
+  label_name    = "vote"
+  selector_name = "vote"
+  type          = "NodePort"
+  port          = 5000
+  target_port   = 80
+  port_name     = "vote-service"
+  node_port     = 31000
 }

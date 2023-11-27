@@ -1,32 +1,3 @@
-module "vote-deployment"{
-  source = "./modules/k8s-deployment/"
-
-  metadata_name   = "vote"
-  label_app       = "vote"
-  replica         = 1
-  selector_label  = "vote"
-  template_metadata = "vote"
-  container_name  = "vote"
-  container_image = "dockersamples/examplevotingapp_vote"
-  container_port = 80
-  port_name = "vote"
-}
-
-module "result-deployment" {
-  source = "./modules/k8s-deployment/"
-
-  metadata_name   = "result"
-  label_app       = "result"
-   replica         = 1
-   selector_label  = "result"
-  template_metadata = "result"
-  container_name  = "result"
-  container_image = "dockersamples/examplevotingapp_result"
-   container_port  = 80
-   port_name = "result"
-}
-
-
 resource "kubernetes_deployment_v1" "db" {
   metadata {
     name = "db"
@@ -113,6 +84,75 @@ resource "kubernetes_deployment_v1" "redis" {
         volume {
           name = "redis-data"
           empty_dir {}
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_deployment_v1" "result" {
+  metadata {
+    name = "result"
+    labels = {
+      app = "result"
+    }
+  }
+  spec {
+    replicas = 1
+    selector {
+      match_labels = {
+        app = "result"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          app = "result"
+        }
+      }
+      spec {
+        container {
+          name  = "result"
+          image = "dockersamples/examplevotingapp_result"
+          port {
+            container_port = 80
+            name = "result"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+resource "kubernetes_deployment_v1" "vote" {
+  metadata {
+    name = "vote"
+    labels = {
+      app = "vote"
+    }
+  }
+  spec {
+    replicas = 1
+    selector {
+      match_labels = {
+        app = "vote"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          app = "vote"
+        }
+      }
+      spec {
+        container {
+          name  = "vote"
+          image = "dockersamples/examplevotingapp_vote"
+          port {
+            container_port = 80
+            name = "vote"
+          }
         }
       }
     }
