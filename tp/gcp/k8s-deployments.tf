@@ -1,3 +1,23 @@
+# variable "metadata_name" {
+#   type = string
+# }
+
+# variable "label_app" {
+#   type = string
+# }
+
+# variable "container_name" {
+#   type = string
+# }
+
+# variable "container_image" {
+#   type = string
+# }
+
+# variable "container_port" {
+#   type = number
+# }
+
 resource "kubernetes_deployment_v1" "db" {
   metadata {
     name = "db"
@@ -107,7 +127,7 @@ resource "kubernetes_deployment_v1" "result" {
     template {
       metadata {
         labels = {
-          app = "redis"
+          app = "result"
         }
       }
       spec {
@@ -153,6 +173,36 @@ resource "kubernetes_deployment_v1" "vote" {
             container_port = 80
             name = "vote"
           }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_deployment_v1" "worker" {
+  metadata {
+    name = "worker"
+    labels = {
+      app = "worker"
+    }
+  }
+  spec {
+    replicas = 1
+    selector {
+      match_labels = {
+        app = "worker"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          app = "worker"
+        }
+      }
+      spec {
+        container {
+          name  = "worker"
+          image = "dockersamples/examplevotingapp_worker"
         }
       }
     }

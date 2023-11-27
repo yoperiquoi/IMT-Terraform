@@ -9,15 +9,7 @@ resource "google_container_cluster" "mycluster" {
   subnetwork = google_compute_subnetwork.mysubnet.name
 }
 
-data "terraform_remote_state" "gke" {
-  backend = "local"
-
-  config = {
-    path = "terraform.tfstate"
-  }
-}
-
 data "google_container_cluster" "my_cluster" {
-  name     = data.terraform_remote_state.gke.outputs.kubernetes_cluster_name
+  name     = resource.google_container_cluster.mycluster.name
   location = var.region
 }
