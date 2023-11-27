@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"redis-follower-deployment","Source":"./modules/k8s-deployment","Dir":"modules/k8s-deployment"},{"Key":"redis-leader-deployment","Source":"./modules/k8s-deployment","Dir":"modules/k8s-deployment"}]}
