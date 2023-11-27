@@ -18,22 +18,19 @@ resource "kubernetes_service_v1" "db" {
   }
 }
 
-resource "kubernetes_service_v1" "redis" {
+resource "kubernetes_service_v1" "redis-service" {
   metadata {
-    name = "redis"
     labels = {
       app = "redis"
     }
+    name = "redis"
   }
+
   spec {
+    type = "ExternalName"
+    external_name = openstack_networking_floatingip_v2.redis_ip.address
     selector = {
       app = "redis"
-    }
-    type = "ClusterIP"
-    port {
-      port = 6379
-      target_port = 6379
-      name = "redis-service"
     }
   }
 }
