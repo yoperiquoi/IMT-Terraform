@@ -101,7 +101,7 @@ resource "kubernetes_deployment_v1" "result" {
     replicas = 1
     selector {
       match_labels = {
-        app = "redis"
+        app = "result"
       }
     }
     template {
@@ -112,23 +112,49 @@ resource "kubernetes_deployment_v1" "result" {
       }
       spec {
         container {
-          name  = "redis"
-          image = "redis:alpine"
+          name  = "result"
+          image = "dockersamples/examplevotingapp_result"
           port {
-            container_port = 6379
-            name = "redis"
+            container_port = 80
+            name = "result"
           }
-          volume_mount {
-            name = "redis-data"
-            mount_path = "/data"
-          }
-        }
-        volume {
-          name = "redis-data"
-          empty_dir {}
         }
       }
     }
   }
 }
 
+
+resource "kubernetes_deployment_v1" "vote" {
+  metadata {
+    name = "vote"
+    labels = {
+      app = "vote"
+    }
+  }
+  spec {
+    replicas = 1
+    selector {
+      match_labels = {
+        app = "vote"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          app = "vote"
+        }
+      }
+      spec {
+        container {
+          name  = "vote"
+          image = "dockersamples/examplevotingapp_vote"
+          port {
+            container_port = 80
+            name = "vote"
+          }
+        }
+      }
+    }
+  }
+}
