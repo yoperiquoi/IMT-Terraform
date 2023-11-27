@@ -15,7 +15,7 @@ resource "docker_container" "result" {
     }
     entrypoint = ["nodemon", "--inspect=0.0.0.0", "server.js"]
     restart = "always"
-    depends_on = [ docker_container.postgres ]
+    depends_on = [ docker_container.db ]
     networks_advanced {
         name = docker_network.back-tier.name
     }
@@ -27,7 +27,7 @@ resource "docker_container" "result" {
 resource "docker_container" "worker" {
     name  = "worker"
     image = docker_image.worker.name
-    depends_on = [ docker_container.redis, docker_container.postgres ]
+    depends_on = [ docker_container.redis, docker_container.db ]
     restart = "always"
     networks_advanced {
         name = docker_network.back-tier.name
@@ -52,7 +52,7 @@ resource "docker_container" "vote" {
         retries = 3
         start_period = "10s"
     }
-    depends_on = [ docker_container.redis]
+    depends_on = [docker_container.redis]
     restart = "always"
     networks_advanced {
         name = docker_network.back-tier.name
@@ -62,8 +62,8 @@ resource "docker_container" "vote" {
     } 
 }
 
-resource "docker_container" "postgres" {
-    name  = "postgres"
+resource "docker_container" "db" {
+    name  = "db"
     image = docker_image.postgres.name
     volumes {
         container_path = "../exemple-voting-app/db-data:/var/lib/postgresql/data"

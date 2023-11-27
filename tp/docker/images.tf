@@ -27,11 +27,11 @@ resource "docker_image" "worker" {
 }
 
 resource "docker_image" "redis" {
-  name = "docker.io/redis:alpine"
+  name = "redis:alpine"
 }
 
 resource "docker_image" "postgres" {
-  name = "docker.io/postgres:15-alpine"
+  name = "postgres:15-alpine"
 }
 
 
