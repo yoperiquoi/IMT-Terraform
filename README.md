@@ -64,3 +64,6 @@ To run the openstack terraform files, run the following commands:
 
 The apply will not retrieve any error but there is one. We have created the Redis Virtual machine on openstack but it is not link with GCP.
 We should update the images on GCP with the openstack image (with good password and so on).
+
+The GitHub Action has been create to do a terraform plan on each push on every branches and the terraform apply is executed only when the push is on the main branch.
+To make this working, our tfstate has been pushed to the gcp bucket to keep track remotely of the state of the GCP.
