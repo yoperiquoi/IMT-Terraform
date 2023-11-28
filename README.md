@@ -62,3 +62,5 @@ To run the openstack terraform files, run the following commands:
     tf apply
 ```
 
+The apply will not retrieve any error but there is one. We have created the Redis Virtual machine on openstack but it is not link with GCP.
+We should update the images on GCP with the openstack image (with good password and so on).
