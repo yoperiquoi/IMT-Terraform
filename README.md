@@ -1,6 +1,6 @@
 # IMT-Terraform (Yoann PERIQUOI & Théo DILLENSEGER)
 
-> :warning: **ALL THE CODE FOR THE TP IS STORE UNDER *TP* REPOSITORY**:
+> :warning: **ALL THE CODE FOR THE TP IS STORED UNDER *TP* REPOSITORY**:
 
 
 # Project Prerequisites
@@ -36,7 +36,7 @@ To run the docker terraform files, run the following commands:
     tf apply
 ```
 
-If it is working, then go the  to reach [vote front-end](http://localhost:4999) and [result front-end](http://localhost:5001)
+If it is working, then go to [vote front-end](http://localhost:4999) and [result front-end](http://localhost:5001)
 
 ## GCP
 
@@ -49,7 +49,7 @@ To run the gcp terraform files, run the following commands:
     tf apply
 ```
 
-If it is working, then go the  to [GCP ingress](https://console.cloud.google.com/kubernetes/ingresses) to try.
+If it is working, then go to [GCP ingress](https://console.cloud.google.com/kubernetes/ingresses) to try.
 
 ## OpenStack
 
