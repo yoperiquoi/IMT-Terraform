@@ -23,7 +23,7 @@ variable "zone" {
   description = "zone"
 }
 variable "credentials_google"{
-  description = "zone"
+  description = "credentials_google"
 }
 
 provider "google" {
@@ -44,4 +44,17 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(
     data.google_container_cluster.my_cluster.master_auth[0].cluster_ca_certificate,
   )
+}
+resource "random_id" "bucket_prefix" {
+  byte_length = 8
+}
+
+resource "google_storage_bucket" "default" {
+  name          = "${random_id.bucket_prefix.hex}-bucket-tfstate"
+  force_destroy = false
+  location      = "EU"
+  storage_class = "STANDARD"
+  versioning {
+    enabled = true
+  }
 }
