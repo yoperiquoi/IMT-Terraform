@@ -1,0 +1,60 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: production
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: tp/gcp
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        
+
+    - name: Terraform Init
+      run: terraform init
+      env:
+        TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        TF_VAR_credentials_google: ${{ secrets.TF_VARS_GOOGLE_CREDENTIALS }}
+        TF_VAR_project_id: ${{ secrets.project_id }}
+        TF_VAR_region: ${{ secrets.region }}
+        TF_VAR_zone: ${{ secrets.zone }}
+
+    - name: Terraform Plan
+      run: terraform plan -input=false
+      env:
+        TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        TF_VAR_credentials_google: ${{ secrets.TF_VARS_GOOGLE_CREDENTIALS }}
+        TF_VAR_project_id: ${{ secrets.project_id }}
+        TF_VAR_region: ${{ secrets.region }}
+        TF_VAR_zone: ${{ secrets.zone }}
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
+      env:
+        TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        TF_VAR_credentials_google: ${{ secrets.TF_VARS_GOOGLE_CREDENTIALS }}
+        TF_VAR_project_id: ${{ secrets.project_id }}
+        TF_VAR_region: ${{ secrets.region }}
+        TF_VAR_zone: ${{ secrets.zone }}
