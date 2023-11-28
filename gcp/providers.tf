@@ -23,7 +23,7 @@ provider "google" {
   project = var.project_id
   region  = var.region
   zone = var.zone
-  credentials = file("tuto-terraform-yperiquoi-d7f404f2b934.json")
+  credentials = var("GOOGLE_CREDENTIALS") != "" ? var("GOOGLE_CREDENTIALS") : file("tuto-terraform-yperiquoi-d7f404f2b934.json")
 }
 
 resource "google_compute_network" "myvpc" {
