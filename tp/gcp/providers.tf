@@ -22,12 +22,15 @@ variable "region" {
 variable "zone" {
   description = "zone"
 }
+variable "credentials_google"{
+  description = "zone"
+}
 
 provider "google" {
   project = var.project_id
   region  = var.region
   zone = var.zone
-  credentials = file("tp-gke-kubernetes-d8c7ecf0f502.json")
+  credentials = var.credentials_google
 }
 
 # Configure kubernetes provider with Oauth2 access token.
