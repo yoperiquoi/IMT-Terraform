@@ -97,6 +97,7 @@ resource "docker_container" "redis" {
 }
 
 resource "docker_container" "seed" {
+    count = var.create_seed_resource ? 1 : 0
     name  = "seed"
     image = docker_image.seed.name
     depends_on = [ docker_container.vote]
@@ -104,4 +105,9 @@ resource "docker_container" "seed" {
     networks_advanced {
         name = docker_network.front-tier.name
     }
+}
+
+variable "create_seed_resource" {
+  description = "Indicates whether to create the seed resource"
+  default     = false
 }
