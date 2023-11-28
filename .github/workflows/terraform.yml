@@ -17,7 +17,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: gcp
+        working-directory: tp/gcp
 
     steps:
     # Checkout the repository to the GitHub Actions runner
