@@ -2,9 +2,8 @@ name: 'Terraform'
 
 on:
   push:
-    branches: 
-    - '**' 
-  pull_request:
+    branches:
+      - "**"
 
 permissions:
   contents: read
@@ -32,7 +31,7 @@ jobs:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
     
     - name: Terraform Init
-      run: terraform init -lock=false
+      run: terraform init
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
@@ -42,7 +41,7 @@ jobs:
         TF_VAR_zone: ${{ secrets.zone }}
 
     - name: Terraform Plan
-      run: terraform plan -input=false -lock=false
+      run: terraform plan -input=false
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
@@ -53,7 +52,7 @@ jobs:
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -lock=false
+      run: terraform apply -auto-approve -input=false
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
