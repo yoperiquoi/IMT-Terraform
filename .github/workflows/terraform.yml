@@ -30,12 +30,13 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
         
-    - name: Gcloud authentification
-      uses: google-github-actions/setup-gcloud@master
-      with:
-        project_id: ${{ secrets.project_id }}
-        service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
-        export_default_credentials: true
+    - name: Authenticate Worker Service to GCP
+      env:
+        TF_VAR_project_id: ${{ secrets.project_id }}
+        TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      run: |
+        echo "$TF_VAR_GOOGLE_CREDENTIALS" > gcp_key.json # Save the key to a file
+        gcloud auth activate-service-account --key-file=gcp_key.json
     
     - name: Terraform Init
       run: terraform init
