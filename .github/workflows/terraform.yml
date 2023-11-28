@@ -35,8 +35,8 @@ jobs:
         TF_VAR_project_id: ${{ secrets.project_id }}
         TF_VAR_GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       run: |
-        echo "$TF_VAR_GOOGLE_CREDENTIALS" > gcp_key.json # Save the key to a file
-        gcloud auth activate-service-account --key-file=gcp_key.json
+        echo "$TF_VAR_GOOGLE_CREDENTIALS" > gcp_key.json
+        gcloud auth activate-service-account --key-file=gcp_key.json  --impersonate-service-account=yoann.periquoi@gmail.com
     
     - name: Terraform Init
       run: terraform init
